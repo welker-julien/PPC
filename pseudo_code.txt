@@ -82,7 +82,8 @@ Market()
 Weather()
 	#temp est une variable dans la mémoire partagé
 	while true
-		for i allant de 0 à 315 # 40°c en kelvin
+		temps=293 #-20°C
+		for i allant de 0 à 60  
 			temp=temp+1
-		for j allant de 0 à 315 
+		for j allant de 0 à 60
 			temp=temp-1
