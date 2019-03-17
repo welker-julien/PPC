@@ -64,7 +64,8 @@ Market()
 		actualiser le prix
 		
 		for element in queue :
-			create thread transaction(volume energie, n° home, type)
+			if semaphore=!0
+				create thread transaction(volume energie, n° home, type)
 	
 	transaction(volume, home,type)
 		if type== vente
