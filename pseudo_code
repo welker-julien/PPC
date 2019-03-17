@@ -34,7 +34,7 @@ home(i)
 	
 
 
-External
+External()
 	coef=1
 	While True
 		i=random(0,1000)
@@ -56,7 +56,7 @@ External
 			coef=coef x constante8 à définir
 		signal constante
 
-Market
+Market()
 	create External
 	def Price()
 		chercher infos(température)
@@ -73,4 +73,6 @@ Market
 		if type == achat
 			inform home acceptation
 			print et MAJ quantité vendue par market et prix
-			
+
+Weather()
+
