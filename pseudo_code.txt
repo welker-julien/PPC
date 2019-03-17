@@ -3,7 +3,7 @@ houses (nb)
 		appel process home(i)
 		
 		
-home(i)
+Home(i)
 	#calcul conso avec température en kelvin
 	C=temp x A
 	#calcul production avec température en kelvin
@@ -67,7 +67,9 @@ Market()
 		
 		for element in queue :
 			if semaphore=!0
+				semaphore.acquire 
 				create thread transaction(volume energie, n° home, type)
+				semaphore.release
 	
 	transaction(volume, home,type)
 		if type== vente
@@ -78,7 +80,7 @@ Market()
 			print et MAJ quantité vendue par market et prix
 
 Weather()
-	temp est une variable dans la mémoire partagé
+	#temp est une variable dans la mémoire partagé
 	while true
 		for i allant de 0 à 315 # 40°c en kelvin
 			temp=temp+1
