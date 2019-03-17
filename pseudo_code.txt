@@ -22,7 +22,7 @@ home(i)
 	elif P<C
 	#on achète
 		mutex.acquire
-		etat[i]=suprod
+		etat[i]=sucons
 		mutex.release
 		for j in range (0, len(etat[]))
 			if etat[j]==surprod
@@ -31,7 +31,9 @@ home(i)
 				#de l'energie alors qu'on en a trouvé
 	else
 	#inexistant car on ne fait rien dans ce cas là
-	
+		mutex.acquire
+		etat[i]=nothing
+		mutex.release
 
 
 External()
@@ -60,7 +62,7 @@ Market()
 	create External
 	def Price()
 		chercher infos(température)
-		?
+		calcul du prix
 		actualiser le prix
 		
 		for element in queue :
