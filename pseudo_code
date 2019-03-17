@@ -68,11 +68,16 @@ Market()
 	
 	transaction(volume, home,type)
 		if type== vente
-			inform home acceptation
+			inform home acceptation via la message queue
 			print et MAJ quantité achété par market et prix
 		if type == achat
-			inform home acceptation
+			inform home acceptation via la message queue
 			print et MAJ quantité vendue par market et prix
 
 Weather()
-
+	temp est une variable dans la mémoire partagé
+	while true
+		for i allant de 0 à 315 # 40°c en kelvin
+			temp=temp+1
+		for j allant de 0 à 315 
+			temp=temp-1
