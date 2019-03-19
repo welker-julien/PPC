@@ -128,7 +128,25 @@ Market()
 				Price()
 			semaphore.release
 	if signal from External
-		maj param prix correspondant
+	coef=1
+		i=random(2,9)
+		if i==5
+			coef=coef x constante à définir
+		if i==6
+			coef=coef x constante2 à définir
+		if i==7
+			coef=coef x constante3 à définir
+		if i==8
+			coef=coef x constante4 à définir
+		if i==9
+			coef=coef x constante5 à définir
+		if i==4
+			coef=coef x constante6 à définir
+		if i==3
+			coef=coef x constante7 à définir
+		if i==2
+			coef=coef x constante8 à définir
+		maj param prix correspondant avec coef
 		Price()
 	
 	def transaction(volume, home,type)
