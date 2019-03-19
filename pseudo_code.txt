@@ -10,46 +10,52 @@ main()
 
 houses (nb)
 	for i in range (0,nb)
-		h = Process(target=Home, args=(i,nb))
+		A=random(0,100)*0.1
+		b=random(0,100)*0.1
+		c=random(0,100)*0.1
+		h = Process(target=Home, args=(i,nb,A,b,c))
 		h.start()
  		h.join()
 		
-Home(i,nb)
-	A=random(0,100)*0.1
-	b=random(0,100)*0.1
-	c=random(0,100)*0.1
+Home(i,nb,A,b,c)
+	
+	wait for message temp for market
 	#calcul conso avec température en kelvin
 	C=temp x A
 	#calcul production avec température en kelvin
-	P= temp x b + temps x c
+	P= temp x b + temp x c
 	
 	if P > C:
 	# on vend
-		mutex.acquire
-		etat[i]=surprod
-		mutex.release
-		#attente de client
-		delay(100)
-		mq = sysv_ipc.MessageQueue(i+1000)
-		message, t = mq.receive()
-		if message != 0
-			value = message.decode()
-   			value parse on ;
-			
-			if value(0)==1
-				if value(2)<(P-C)
-					mq = sysv_ipc.MessageQueue(value(1)+1000)
-					message = str((3;i)).encode() #value= 3 car accepte la demande
-    					mq.send(message)
-			wait
+		Surprod=P-C
+		while Surprod !=0
+			#attente de client
+			delay(100)
 			mq = sysv_ipc.MessageQueue(i+1000)
 			message, t = mq.receive()
+			if message != 0
+				value = message.decode()
+   				value parse on ;
+				qttdeman=value(2)
+				if value(0)==1
+					if value(2)<Surprod
+						mq = sysv_ipc.MessageQueue(value(1)+1000)
+						message = str((3;i)).encode() #value= 3 car accepte la demande
+    						mq.send(message)
+					wait
+					mq = sysv_ipc.MessageQueue(i+1000)
+					message, t = mq.receive()
+					Surprod=Surprod-qttdeman
+			
 
 				
-		else
-			mq = sysv_ipc.MessageQueue(1100)
-			message = str(2;i;P-C)).encode() #2 car on vend au market
-    			mq.send(message)
+			else
+				mq = sysv_ipc.MessageQueue(1100)
+				message = str(2;i;P-C)).encode() #2 car on vend au market
+    				mq.send(message)
+				while mq for market pas reçu
+					wait
+			
 					
 		
 	elif P<C
@@ -122,8 +128,10 @@ Market()
 	
 	transaction(volume, home,type)
 		if type== vente
+			inform home acceptation via mq home
 			print( qttachete, prix, num process home)
 		if type == achat
+			inform home acceptation via mq home
 			print( qttvendue, prix, num process home)
 	
 		
