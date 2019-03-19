@@ -12,6 +12,7 @@ Home(i)
 	c=temp x A
 	#calcul production avec température en kelvin
 	P= temp x b + temps x c
+	
 	if P > C:
 	# on vend
 		mutex.acquire
@@ -53,6 +54,8 @@ Market()
 	ext.start()
  	ext.join()
 	Price()
+	for i in range(
+		
 	def Price()
 		chercher infos(température)
 		prix=voir formule
