@@ -1,10 +1,11 @@
 main()
 	nb=20
-	array=[] # array contient les key des maison à leur indice et le dernier membre est le key 
+	
 	for i in range (0,nb+1):
-		generate key
-		array=array.join(generate)
 		
+		mq = sysv_ipc.MessageQueue(i+1000, sysv_ipc.IPC_CREAT) #clé en i+1000 pour ne pas etre sur des  clé reservé
+		
+	mq = sysv_ipc.MessageQueue(1100, sysv_ipc.IPC_CREAT) #clé en 1100 pour le market	
 
 
 houses (nb)
@@ -14,8 +15,11 @@ houses (nb)
  		h.join()
 		
 Home(i,nb)
+	A=random(0,100)*0.1
+	b=random(0,100)*0.1
+	c=random(0,100)*0.1
 	#calcul conso avec température en kelvin
-	c=temp x A
+	C=temp x A
 	#calcul production avec température en kelvin
 	P= temp x b + temps x c
 	
@@ -26,20 +30,53 @@ Home(i,nb)
 		mutex.release
 		#attente de client
 		delay(100)
-		if message_queue != 0
-			if type_message=demande
-				if volume_demande<(P-C)
-					accept demande
+		mq = sysv_ipc.MessageQueue(i+1000)
+		message, t = mq.receive()
+		if message != 0
+			value = message.decode()
+   			value parse on ;
+			
+			if value(0)==1
+				if value(2)<(P-C)
+					mq = sysv_ipc.MessageQueue(value(1)+1000)
+					message = str((3;i)).encode() #value= 3 car accepte la demande
+    					mq.send(message)
+			wait
+			mq = sysv_ipc.MessageQueue(i+1000)
+			message, t = mq.receive()
+
+				
+		else
+			mq = sysv_ipc.MessageQueue(1100)
+			message = str(2;i;P-C)).encode() #2 car on vend au market
+    			mq.send(message)
 					
 		
 	elif P<C
 	#on achète
 		
-		for j in range (0, len(etat[])
-				messagequeue. (type=demande)
-				break #pour ne pas aller demander à un autre 
-				#de l'energie alors qu'on en a trouvé
-				print(qqt energie,  num process vendeur,num process acheteur)
+		for j in range (0, nb)
+			mq = sysv_ipc.MessageQueue(j+1000)
+			message = str((1;i;P-C)).encode() #value= 1 car on demande de l'energie
+    			mq.send(message)
+		wait
+		mq = sysv_ipc.MessageQueue(i+1000)
+		message, t = mq.receive()
+		
+		if message != 0
+			value = message.decode()
+   			value parse on ;
+			print(P-C,  num process vendeur,num process acheteur)
+			
+			mq = sysv_ipc.MessageQueue(value(1)+1000)
+			message = str(3;i;P-C)).encode() #3 car on acquite la vente
+    			mq.send(message)
+		else
+			mq = sysv_ipc.MessageQueue(1100)
+			message = str(1;i;P-C)).encode() #3 car on acquite la vente
+    			mq.send(message)
+		
+				
 	else
 	#inexistant car on ne fait rien dans ce cas là
 		
@@ -60,7 +97,8 @@ Market()
 	ext.start()
  	ext.join()
 	Price()
-	for i in range(
+	for i in range(nb)
+		transmettre temperature à home(i)
 		
 	def Price()
 		chercher infos(température)
@@ -80,14 +118,12 @@ Market()
 				qtt_energie=qtt_energie-qttvendue
 				Price()
 			semaphore.release
-	If signal from weather
+	if signal from Weather
 	
 	transaction(volume, home,type)
 		if type== vente
-			inform home acceptation via la message queue
 			print( qttachete, prix, num process home)
 		if type == achat
-			inform home acceptation via la message queue
 			print( qttvendue, prix, num process home)
 	
 		
@@ -95,8 +131,9 @@ Market()
 Weather()
 	#temp est une variable dans la mémoire partagé
 	while true
-		temp=293 #-20°C
+		temp=293 #-20°C mémoire partagé avec market
 		for i allant de 0 à 60  
 			temp=temp+1
 		for j allant de 0 à 60
 			temp=temp-1
+	
