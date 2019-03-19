@@ -6,7 +6,7 @@ main()
 		mq = sysv_ipc.MessageQueue(i+1000, sysv_ipc.IPC_CREAT) #clé en i+1000 pour ne pas etre sur des  clé reservé
 		
 	mq = sysv_ipc.MessageQueue(1100, sysv_ipc.IPC_CREAT) #clé en 1100 pour le market	
-
+	création market weather et houses
 
 houses (nb)
 	for i in range (0,nb)
@@ -103,52 +103,13 @@ Market()
 	ext = Process(target=External)
 	ext.start()
  	ext.join()
-	Price()
 	
-	
-		
 	def Price()
 		Recuperer temperature
 		prix=voir formule
 		for i in range(nb)
 			transmettre temperature à home(i)
-		
-		
-	for element in queue :
-		if semaphore=!0
-			semaphore.acquire 
-			trans = Thread(target=transaction, args(volume energie, n° home, type)
-			trans.start()
- 			trans.join()
-			if type== vente
-				qtt_energie=qtt_energie+qttachete
-				Price()
-			if type == achat
-				qtt_energie=qtt_energie-qttvendue
-				Price()
-			semaphore.release
-	if signal from External
-	coef=1
-		i=random(2,9)
-		if i==5
-			coef=coef x constante à définir
-		if i==6
-			coef=coef x constante2 à définir
-		if i==7
-			coef=coef x constante3 à définir
-		if i==8
-			coef=coef x constante4 à définir
-		if i==9
-			coef=coef x constante5 à définir
-		if i==4
-			coef=coef x constante6 à définir
-		if i==3
-			coef=coef x constante7 à définir
-		if i==2
-			coef=coef x constante8 à définir
-		maj param prix correspondant avec coef
-		Price()
-	
+			
 	def transaction(volume, home,type)
 		if type== vente
 			inform home acceptation via mq home
@@ -156,8 +117,50 @@ Market()
 		if type == achat
 			inform home acceptation via mq home
 			print( qttvendue, prix, num process home)
+	while true
+		Price()
+	
 	
 		
+
+		
+		
+		for element in queue :
+			if semaphore=!0
+				semaphore.acquire 
+				trans = Thread(target=transaction, args(volume energie, n° home, type)
+				trans.start()
+ 				trans.join()
+				if type== vente
+					qtt_energie=qtt_energie+qttachete
+					Price()
+				if type == achat
+					qtt_energie=qtt_energie-qttvendue
+					Price()
+				semaphore.release
+		if signal from External
+		coef=1
+			i=random(2,9)
+			if i==5
+				coef=coef x constante à définir
+			if i==6
+				coef=coef x constante2 à définir
+			if i==7
+				coef=coef x constante3 à définir
+			if i==8
+				coef=coef x constante4 à définir
+			if i==9
+				coef=coef x constante5 à définir
+			if i==4
+				coef=coef x constante6 à définir
+			if i==3
+				coef=coef x constante7 à définir
+			if i==2
+				coef=coef x constante8 à définir
+			maj param prix correspondant avec coef
+			Price()
+	
+	
 
 Weather()
 	#temp est une variable dans la mémoire partagé
@@ -167,4 +170,5 @@ Weather()
 			temp=temp+1
 		for j allant de 0 à 60
 			temp=temp-1
+		wait (100)
 	
