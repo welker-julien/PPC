@@ -19,26 +19,24 @@ Home(i)
 		mutex.release
 		#attente de client
 		delay(100)
-		if message queue != 0
-		.
+		if message_queue != 0
+			if type_message=demande
+				if volume_demande<(P-C)
+					accept demande
+					
 		.
 		.
 	elif P<C
 	#on achète
-		mutex.acquire
-		etat[i]=sucons
-		mutex.release
-		for j in range (0, len(etat[]))
-			if etat[j]==surprod
-				messagequeue.demande
+		
+		for j in range (0, len(etat[])
+				messagequeue. (type=demande)
 				break #pour ne pas aller demander à un autre 
 				#de l'energie alors qu'on en a trouvé
 				print(qqt energie,  num process vendeur,num process acheteur)
 	else
 	#inexistant car on ne fait rien dans ce cas là
-		mutex.acquire
-		etat[i]=nothing
-		mutex.release
+		
 
 
 External()
@@ -72,26 +70,30 @@ Market()
  	ext.join()
 	def Price()
 		chercher infos(température)
-		calcul du prix
-		actualiser le prix
+		prix calcul du prix
 		
-		for element in queue :
-			if semaphore=!0
-				semaphore.acquire 
-				trans = Thread(target=transaction, args(volume energie, n° home, type)
-				trans.start()
- 				trans.join()
-				semaphore.release
+		
+	for element in queue :
+		if semaphore=!0
+			semaphore.acquire 
+			trans = Thread(target=transaction, args(volume energie, n° home, type)
+			trans.start()
+ 			trans.join()
+			if type== vente
+				qtt_energie=qtt_energie+qttachete
+				Price()
+			if type == achat
+				qtt_energie=qtt_energie-qttvendue
+				Price()
+			semaphore.release
 	
 	transaction(volume, home,type)
 		if type== vente
 			inform home acceptation via la message queue
 			print( qttachete, prix, num process home)
-			MAJ quantité achété par market et prix
 		if type == achat
 			inform home acceptation via la message queue
 			print( qttvendue, prix, num process home)
-			MAJ quantité vendue par market et prix
 
 Weather()
 	#temp est une variable dans la mémoire partagé
