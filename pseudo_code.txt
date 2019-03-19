@@ -24,8 +24,7 @@ Home(i)
 				if volume_demande<(P-C)
 					accept demande
 					
-		.
-		.
+		
 	elif P<C
 	#on achète
 		
@@ -42,35 +41,21 @@ Home(i)
 External()
 	coef=1
 	While True
-		i=random(0,1000)
-		if i==500
-			coef=coef x constante à définir
-		if i==600
-			coef=coef x constante2 à définir
-		if i==700
-			coef=coef x constante3 à définir
-		if i==800
-			coef=coef x constante4 à définir
-		if i==900
-			coef=coef x constante5 à définir
-		if i==400
-			coef=coef x constante6 à définir
-		if i==300
-			coef=coef x constante7 à définir
-		if i==200
-			coef=coef x constante8 à définir
-		data_ready=processing.Event()
+		i=random(0,100)
+		if i==1
+			send signal to market
 		wait(i)
 
 Market()
 	qtt_energie=0
-	prix=
+	prix=0.14
 	ext = Process(target=External)
 	ext.start()
  	ext.join()
+	Price()
 	def Price()
 		chercher infos(température)
-		prix calcul du prix
+		prix=voir formule
 		
 		
 	for element in queue :
