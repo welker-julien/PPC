@@ -9,10 +9,10 @@ houses (nb)
 		
 Home(i)
 	#calcul conso avec température en kelvin
-	C=temp x A
+	c=temp x A
 	#calcul production avec température en kelvin
 	P= temp x b + temps x c
-	if P> C
+	if P > C:
 	# on vend
 		mutex.acquire
 		etat[i]=surprod
