@@ -1,13 +1,19 @@
-import threading
-import multiprocessing
+main()
+	nb=20
+	array=[] # array contient les key des maison à leur indice et le dernier membre est le key 
+	for i in range (0,nb+1):
+		generate key
+		array=array.join(generate)
+		
+
 
 houses (nb)
 	for i in range (0,nb)
-		h = Process(target=Home, args=(i,))
+		h = Process(target=Home, args=(i,nb))
 		h.start()
  		h.join()
 		
-Home(i)
+Home(i,nb)
 	#calcul conso avec température en kelvin
 	c=temp x A
 	#calcul production avec température en kelvin
@@ -74,6 +80,7 @@ Market()
 				qtt_energie=qtt_energie-qttvendue
 				Price()
 			semaphore.release
+	If signal from weather
 	
 	transaction(volume, home,type)
 		if type== vente
@@ -82,6 +89,8 @@ Market()
 		if type == achat
 			inform home acceptation via la message queue
 			print( qttvendue, prix, num process home)
+	
+		
 
 Weather()
 	#temp est une variable dans la mémoire partagé
