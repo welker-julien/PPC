@@ -51,10 +51,11 @@ Home(i,nb,A,b,c)
 				
 			else
 				mq = sysv_ipc.MessageQueue(1100)
-				message = str(2;i;P-C)).encode() #2 car on vend au market
+				message = str(2;i;Surprod).encode() #2 car on vend au market
     				mq.send(message)
 				while mq for market pas reçu
 					wait
+				Surprod=0
 			
 					
 		
@@ -63,7 +64,7 @@ Home(i,nb,A,b,c)
 		
 		for j in range (0, nb)
 			mq = sysv_ipc.MessageQueue(j+1000)
-			message = str((1;i;P-C)).encode() #value= 1 car on demande de l'energie
+			message = str((1;i;C-P)).encode() #value= 1 car on demande de l'energie
     			mq.send(message)
 		wait
 		mq = sysv_ipc.MessageQueue(i+1000)
@@ -75,11 +76,11 @@ Home(i,nb,A,b,c)
 			print(P-C,  num process vendeur,num process acheteur)
 			
 			mq = sysv_ipc.MessageQueue(value(1)+1000)
-			message = str(3;i;P-C)).encode() #3 car on acquite la vente
+			message = str(3;i;C-P)).encode() #3 car on acquite la vente
     			mq.send(message)
 		else
 			mq = sysv_ipc.MessageQueue(1100)
-			message = str(1;i;P-C)).encode() #3 car on acquite la vente
+			message = str(1;i;C-P)).encode() #3 car on acquite la vente
     			mq.send(message)
 		
 				
@@ -89,7 +90,7 @@ Home(i,nb,A,b,c)
 
 
 External()
-	coef=1
+
 	While True
 		i=random(0,100)
 		if i==1
@@ -103,12 +104,14 @@ Market()
 	ext.start()
  	ext.join()
 	Price()
-	for i in range(nb)
-		transmettre temperature à home(i)
+	
+	
 		
 	def Price()
-		chercher infos(température)
+		Recuperer temperature
 		prix=voir formule
+		for i in range(nb)
+			transmettre temperature à home(i)
 		
 		
 	for element in queue :
@@ -124,9 +127,11 @@ Market()
 				qtt_energie=qtt_energie-qttvendue
 				Price()
 			semaphore.release
-	if signal from Weather
+	if signal from External
+		maj param prix correspondant
+		Price()
 	
-	transaction(volume, home,type)
+	def transaction(volume, home,type)
 		if type== vente
 			inform home acceptation via mq home
 			print( qttachete, prix, num process home)
