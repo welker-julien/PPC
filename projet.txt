@@ -1,0 +1,76 @@
+﻿houses (nb)
+	for i in range (0,nb)
+		appel process home(i)
+		
+		
+home(i)
+	#calcul conso avec température en kelvin
+	C=temp x A
+	#calcul production avec température en kelvin
+	P= temp x b + temps x c
+	if P> C
+	# on vend
+		mutex.acquire
+		etat[i]=surprod
+		mutex.release
+		#attente de client
+		delay(100)
+		if message queue != 0
+		.
+		.
+		.
+	elif P<C
+	#on achète
+		mutex.acquire
+		etat[i]=suprod
+		mutex.release
+		for j in range (0, len(etat[]))
+			if etat[j]==surprod
+				messagequeue.demande
+				break #pour ne pas aller demander à un autre 
+				#de l'energie alors qu'on en a trouvé
+	else
+	#inexistant car on ne fait rien dans ce cas là
+	
+
+
+External
+	coef=1
+	While True
+		i=random(0,1000)
+		if i==500
+			coef=coef x constante à définir
+		if i==600
+			coef=coef x constante2 à définir
+		if i==700
+			coef=coef x constante3 à définir
+		if i==800
+			coef=coef x constante4 à définir
+		if i==900
+			coef=coef x constante5 à définir
+		if i==400
+			coef=coef x constante6 à définir
+		if i==300
+			coef=coef x constante7 à définir
+		if i==200
+			coef=coef x constante8 à définir
+		signal constante
+
+Market
+	create External
+	def Price()
+		chercher infos(température)
+		calcul du prix
+		actualiser le prix
+		
+		for element in queue :
+			create thread transaction(volume energie, n° home, type)
+	
+	transaction(volume, home,type)
+		if type== vente
+			inform home acceptation
+			print et MAJ quantité achété par market et prix
+		if type == achat
+			inform home acceptation
+			print et MAJ quantité vendue par market et prix
+			
