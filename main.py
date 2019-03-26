@@ -27,11 +27,15 @@ def Home(i,nb,A,B,temp):
 	if Prod >Conso:
 		print("Surproduction de ", Prod-Conso)
 		Surprod =Prod-Conso
+		print (Surprod,"ici")
 		while Surprod!=0:
 			#routine de vente
-			time.sleep(1)
+			print("while")
+			#time.sleep(1)
 			mqh=sysv_ipc.MessageQueue(1000)
-			message,t= mqh.receive()
+			print("a")
+			message,t=mqh.receive()#erreur passe pas
+			print("ae")
 			if message !=0:
 				value= message.decode()
 				#value parse on
