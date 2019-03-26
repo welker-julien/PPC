@@ -1,6 +1,6 @@
 from multiprocessing import Process
 import threading
-import os,signal, time, sys, random
+import os,signal, time, sys, random, sysv_ipc
 
  
 def weather(temp):
@@ -18,57 +18,60 @@ def weather(temp):
 			p=p+1
 		else:
 			break
+#mq plante
 def Home(i,nb,A,B,temp):
-	print("home",i,"connected",temp)
+	#while true:
+	print("home",i,"connected")
 	Conso=temp*A
 	Prod=temp*B
 	if Prod >Conso:
+		print("Surproduction de ", Prod-Conso)
 		Surprod =Prod-Conso
 		while Surprod!=0:
 			#routine de vente
-			sys.wait(1)
+			time.sleep(1)
 			mqh=sysv_ipc.MessageQueue(1000)
-			message,typ,timeout= mqh.receive()
+			message,t= mqh.receive()
 			if message !=0:
 				value= message.decode()
 				#value parse on
-				qttdemande=value(2)
-				if value(0)==1:#type recherche d'energie
-					if value(2)<Surpod:
+				qttdemande=value[1]
+				if t==1:#type recherche d'energie
+					if value[1]<Surpod:
 						mqh=sysv_ipc.MessageQueue(1000)
-						message=str((3;i;timeout)).encode()
-						mqh.send(message)
-						sys.wait(1)
-						message,typ,timeout=mqh.receive()
-						Surrod=Surprod-qttdemande
+						message=str((i,timeout)).encode()
+						mqh.send(message,type=3)
+						time.sleep(1)
+						message,t=mqh.receive()
+						Surprod=Surprod-qttdemande
 			else:
 				mqm=sysv_ipc.MessageQueue(1100)
-				message=str(2;i;Surprod).encode()#2=VENTE AU MARKET
-				mqm.send(message)
-				message,typ,timeout=mqm.receive()
+				message=str((i,Surprod)).encode()#2=VENTE AU MARKET
+				mqm.send(message,type=2)
+				message,t=mqm.receive()
 				while message!=4:
-					message,typ,timeout=mqm.receive()
+					message,t=mqm.receive()
 				Surprod=0
-	elif P<C:
+	elif Prod<Conso:
+		print("Surconsomation de ",Conso-Prod)
 		mqh=sysv_ipc.MessageQueue(1000)
-		message=str((1;i;C-P)).encode()#1= j'ia besoin d'energie
-		mqh.send(message)
-		message,typ,timeout=mqh.receive()
-		if message ==2:
+		message=str((i,Conso-Prod)).encode()#1= j'ai besoin d'energie
+		mqh.send(message,type=1)
+		message,t=mqh.receive()
+		if type ==2:
 			value= message.decode()
 			#value parse on
-			print(P-C, i,value(1))
-
+			print(P-C, i,t)
 			mqh=sysv_ipc.MessageQueue(1000)
-			message= str(3;i;C-P)).encode()
-			mq.send(message)
+			message= str((i,Conso-Prod)).encode()
+			mq.send(message,type=3)
 		else:
 			mqm=sysv_ipc.MessageQueue(1100)
-			message=str(1;i;C-P)).encode()#on vend au marché
-			mqm.send(message)
+			message=str((i,Conso-Prod)).encode()#on achète au marché donc 1
+			mqm.send(message,type=1)
 	else:
 		#nada car on est à l'équilibre
-
+		print("equilibre")
 
 
 	
@@ -93,23 +96,24 @@ def houses(nb,temp):
 
 if __name__ == "__main__":
 	
-		nb=5 #Nombre de maison	
-		temp=293
-		#m=Process(target=Market,args=(temp,))
-		#m.start()
-		#m.join()		
-		
-		w = Process(target=weather, args=(temp,))
-		w.start()
-		w.join()
-		
-		h=Process(target=houses,args=(nb,temp))
-		h.start()
-		h.join()
-		
-		#mqh=sysv_ipc.MessageQueue(1000,sysv_ipc.IPC_CREAT)#message queue des homes
+	nb=5 #Nombre de maison	
+	temp=293
+	mqh=sysv_ipc.MessageQueue(1000,sysv_ipc.IPC_CREAT)#message queue des homes
 
-		#mqm=sysv_ipc.MessageQueue(1100,sysv_ipc.IPC_CREAT)#message queue du market
+	mqm=sysv_ipc.MessageQueue(1100,sysv_ipc.IPC_CREAT)#message queue du market
+	#m=Process(target=Market,args=(temp,))
+	#m.start()
+	#m.join()		
+		
+	w = Process(target=weather, args=(temp,))
+	w.start()
+	w.join()
+		
+	h=Process(target=houses,args=(nb,temp))
+	h.start()
+	h.join()
+		
+		
 
 #garbage collector des messages queues
 
