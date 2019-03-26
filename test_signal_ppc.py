@@ -4,18 +4,11 @@ import os, signal, time, random
 
 
 def receiveSignal(signalNumber, frame):
-		i=random.randint(0,5)
-		if i==0 :
-			coef_ext=coef_ext*0.1 #communisme
-		elif i==2 :
-			coef_ext=coef_ext*0.5 #invention du nucléaire
-		elif i==3 :
-			coef_ext=coef_ext*0.8 #cadeaux
-		elif i==4 :
-			coef_ext=coef_ext*1.5 #monopole
-		else :
-			coef_ext=coef_ext*5 #guerre
-        price()
+		tab_ext[0,0,0,0,0,0]
+		for i in range (0,random.randint(1,5):
+			tab_ext[random.randint(0,5)]=1
+        price(prix courant,tab_ext,temperature,totaux)
+				
 
 
 def External():
