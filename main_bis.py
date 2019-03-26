@@ -28,7 +28,7 @@ def Home(homeNumber,A,B):
         Surconsommation(homeNumber,homeConso,homeProd)
 
 def Surproduction(homeNumber,homeConso,homeProd):
-    print("C la suproD")
+    print("Surprod", homeNumber)
     surproduction = homeProd - homeConso
     while surproduction != 0:
         time.sleep(10)
@@ -51,7 +51,7 @@ def Surproduction(homeNumber,homeConso,homeProd):
             #TODO : Verification du print dans le thread
 
 def Surconsommation(homeNumber,homeConso,homeProd):
-    print("Il est sur-con Welker :)")
+    print("Surconso", homeNumber)
     surconsommation = homeConso - homeProd
     print("surconsommation de ", surconsommation)
     HOME_QUEUE.send(str((homeNumber,Surconsommation,datetime.datetime.now())).encode(),type=1)
