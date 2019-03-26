@@ -1,23 +1,32 @@
 
 from multiprocessing import Process
-import os
-import signal
-import time
-import sys
+import os, signal, time, random
+
 
 def receiveSignal(signalNumber, frame):
-    print('Received:', signalNumber)
-    #aller chercher info weather
-    return
+		i=random.randint(0,5)
+		if i==0
+			coef_ext=coef_ext*0.1 #communisme
+		elif i==2
+			coef_ext=coef_ext*0.5 #invention du nucléaire
+		elif i==3
+			coef_ext=coef_ext*0.8 #cadeaux
+		elif i==4
+			coef_ext=coef_ext*1.5 #monopole
+		else
+			coef_ext=coef_ext*5 #guerre
+        price()
 
-def Fils(PPID):
-    time.sleep(5)
-    # PPID=os.getppid
-    os.kill(os.getppid(), signal.SIGUSR1)
+
+def External():
+    while True:
+        i=random.randint(0,100)
+        # print("fail")
+        if (i==1):
+            os.kill(os.getppid(), signal.SIGUSR1)
+
 
 if __name__ == '__main__':
-    child = Process(target=Fils,args=(os.getpid,))
-    print ("o")
+    signal.signal(signal.SIGUSR1, receiveSignal)
+    child = Process(target=External ,args=())
     child.start()
-    while True:
-        signal.signal(signal.SIGUSR1, receiveSignal)
