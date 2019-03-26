@@ -18,10 +18,61 @@ def weather(temp):
 			p=p+1
 		else:
 			break
-def Home(i,nb,A,B,C,temp):
+def Home(i,nb,A,B,temp):
 	print("home",i,"connected",temp)
 	Conso=temp*A
-	Prod=temp*B+temp*C
+	Prod=temp*B
+	if Prod >Conso:
+		Surprod =Prod-Conso
+		while Surprod!=0:
+			#routine de vente
+			sys.wait(1)
+			mqh=sysv_ipc.MessageQueue(1000)
+			message,typ,timeout= mqh.receive()
+			if message !=0:
+				value= message.decode()
+				#value parse on
+				qttdemande=value(2)
+				if value(0)==1:#type recherche d'energie
+					if value(2)<Surpod:
+						mqh=sysv_ipc.MessageQueue(1000)
+						message=str((3;i;timeout)).encode()
+						mqh.send(message)
+						sys.wait(1)
+						message,typ,timeout=mqh.receive()
+						Surrod=Surprod-qttdemande
+			else:
+				mqm=sysv_ipc.MessageQueue(1100)
+				message=str(2;i;Surprod).encode()#2=VENTE AU MARKET
+				mqm.send(message)
+				message,typ,timeout=mqm.receive()
+				while message!=4:
+					message,typ,timeout=mqm.receive()
+				Surprod=0
+	elif P<C:
+		mqh=sysv_ipc.MessageQueue(1000)
+		message=str((1;i;C-P)).encode()#1= j'ia besoin d'energie
+		mqh.send(message)
+		message,typ,timeout=mqh.receive()
+		if message ==2:
+			value= message.decode()
+			#value parse on
+			print(P-C, i,value(1))
+
+			mqh=sysv_ipc.MessageQueue(1000)
+			message= str(3;i;C-P)).encode()
+			mq.send(message)
+		else:
+			mqm=sysv_ipc.MessageQueue(1100)
+			message=str(1;i;C-P)).encode()#on vend au marché
+			mqm.send(message)
+	else:
+		#nada car on est à l'équilibre
+
+
+
+	
+
 	print(i,"nb de maison: ",nb,"constantes de calcul: ",Conso-Prod)
 
 
@@ -33,7 +84,7 @@ def houses(nb,temp):
 		B=random.randint(0,10)
 		C=random.randint(0,10)
 
-		ho=Process(target=Home,args=(i,nb,A,B,C,temp))
+		ho=Process(target=Home,args=(i,nb,A,B,temp))
 		ho.start()
 		ho.join()
 
