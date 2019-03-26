@@ -34,14 +34,14 @@ def Home(i,nb,A,B,temp):
 			#time.sleep(1)
 			mqh=sysv_ipc.MessageQueue(1000)
 			print("a")
-			message,t=mqh.receive()#erreur passe pas
-			print("ae")
+			message,t=mqh.receive()
+			print("ae")#erreur après
 			if message !=0:
 				value= message.decode()
 				#value parse on
 				qttdemande=value[1]
 				if t==1:#type recherche d'energie
-					if value[1]<Surpod:
+					if int(value[1])<Surprod:
 						mqh=sysv_ipc.MessageQueue(1000)
 						message=str((i,timeout)).encode()
 						mqh.send(message,type=3)
@@ -93,9 +93,7 @@ def houses(nb,temp):
 
 		ho=Process(target=Home,args=(i,nb,A,B,temp))
 		ho.start()
-		ho.join()
-
-
+	ho.join()
 
 
 if __name__ == "__main__":
