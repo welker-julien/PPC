@@ -3,21 +3,20 @@
 from multiprocessing import Process,Value
 import sys,time,os,random
 
-def weather(temp_courant):
+def Weather(temp_courant):
     while True:
         Maj_Temp=random.randint(-5,5)
-        if 45 < temp_courant + Maj_Temp < -20:
-            temp_courant.value=temp_courant-Maj_Temp
-
+        if -20<=(temp_courant.value + Maj_Temp)<=20:
+            temp_courant.value=temp_courant.value+Maj_Temp
 
 def Market(temp):
-    Process(target=weather,args=(temp,)).start()
+    Process(target=Weather,args=(temp,)).start()
 
 
 
 def Home(temp):
     while True:
-        print("température:",test.value)
+        print("température:",temp.value)
         time.sleep(1)
 
 
@@ -27,4 +26,4 @@ if __name__ == "__main__":
     print("nb: il faut passer la variable partagé en paramètre de toutes les fonctions")
     Temperature=Value('d',0)
     Process(target=Market,args=(Temperature,)).start()
-    Process(target=Home ,args=(Temperature,)).start()
+    Process(target=Home,args=(Temperature,)).start()
