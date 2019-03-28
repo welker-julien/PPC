@@ -2,11 +2,41 @@ from multiprocessing import Process
 import os,signal, time, sys, random, sysv_ipc,datetime
 
 
-def Weather():
-    print(temperature)
+
+def Weather(temp_courant):
+    while True:
+        Maj_Temp=random.randint(-5,5)
+        if -20<=(temp_courant.value + Maj_Temp)<=20:
+            temp_courant.value=temp_courant.value+Maj_Temp
+
+def External():
+    while True: #1 == 1 ?
+        i=random.randint(0,100)
+        if (i==1):
+            os.kill(os.getppid(), signal.SIGUSR1)
+
+def Price(prix_courant,val_ext):
+    coef_ext=[-200,-150,80,120,150,200]
+    tot = 0
+    for i in range (0,5):
+        tot=tot+prix_courant[i]*coef_ext*val_ext[i]
+    return tot
+#TODO : fonction transaction 
+def Transaction():
+    
+
+
+def receiveSignal(signalNumber, frame):
+    tab_ext = list(map(lambda : random.randint(0,1),tab_ext))
 
 def Market():
-    Process(target=Weather,args=()).start() 
+    Process(target=Weather,args=()).start()
+    Quantite_energie = 0
+    prix_courant = 0.14
+    tab_ext = Array('i', range(10))
+    ext=Process(target=External,args=())
+    price(prix_courant,tab_ext,temperature,totaux)
+    signal.signal(signal.SIGUSR1, receiveSignal)
 
 def Houses():
     for i in range(NB_HOME):
@@ -82,7 +112,7 @@ if __name__ == '__main__':
     temperature = 20
     HOME_QUEUE = sysv_ipc.MessageQueue(1000,sysv_ipc.IPC_CREAT)
     MARKET_QUEUE = sysv_ipc.MessageQueue(1100,sysv_ipc.IPC_CREAT)
-
+    tab_ext = [0 for x in range(6)]
     # Market processing
     Process(target=Market,args=()).start() 
     Process(target=Houses,args=()).start() 
