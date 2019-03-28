@@ -31,22 +31,29 @@ def Surproduction(homeNumber,homeConso,homeProd):
     print("Surprod", homeNumber)
     surproduction = homeProd - homeConso
     while surproduction != 0:
-        time.sleep(10)
-        message,messageType = HOME_QUEUE.receive()
+        #time.sleep(10)
+        if HOME_QUEUE.current_messages != 0:
+            message,messageType = HOME_QUEUE.receive()
+        else: #TODO : GERER MARKET 
+            return 
         if message != None:
             data = message.decode().split(',')
             qttDemande = int(data[1])
             if messageType == 1:
                 if qttDemande < surproduction:
-                    if  datetime.strptime(data[2]) + 20 >  datetime.datetime.now():
+                    if  int(data[2].split(".")[0]) + 20 >  time.time():
                         HOME_QUEUE.send(type = 2) #ACK
                     time.sleep(21)    
                     #Waitin for answer
-                    newMessage,newMessageType = HOME_QUEUE.receive()
+                    if HOME_QUEUE.current_messages != 0:
+                        message,messageType = HOME_QUEUE.receive()
+                    
+                    
+                    #newMessage,newMessageType = HOME_QUEUE.receive()
                     if newMessageType == 3:
                         surproduction = surproduction - qttDemande
         else:
-            MARKET_QUEUE.send(str((homeNumber,Surconsommation)).encode(),type=1)
+            MARKET_QUEUE.send(str((homeNumber,surconsommation)).encode(),type=1)
             surproduction = 0
             #TODO : Verification du print dans le thread
 
@@ -54,16 +61,19 @@ def Surconsommation(homeNumber,homeConso,homeProd):
     print("Surconso", homeNumber)
     surconsommation = homeConso - homeProd
     print("surconsommation de ", surconsommation)
-    HOME_QUEUE.send(str((homeNumber,Surconsommation,datetime.datetime.now())).encode(),type=1)
-    time.sleep(20)
-    message,messageType = HOME_QUEUE.receive()
+    HOME_QUEUE.send(str((homeNumber,surconsommation,time.time())).encode(),type=1)
+    #time.sleep(20)
+    if HOME_QUEUE.current_messages != 0:
+        message,messageType = HOME_QUEUE.receive()
+    else: #TODO : GERER MARKET 
+            return 
 
     if messageType == 2:
         data = message.decode().split(',')
         print("home",data[0],"vend",data[1],"Kwh",homeNumber) #process vendeur, quantite
         HOME_QUEUE.send(type=3) #ACK
     else: 
-        MARKET_QUEUE.send(str((homeNumber,Surconsommation)).encode(),type=1)
+        MARKET_QUEUE.send(str((homeNumber,surconsommation)).encode(),type=1)
         surconsommation = 0
         #TODO : Verification du print dans le thread.
 
