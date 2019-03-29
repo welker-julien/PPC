@@ -6,41 +6,47 @@ Quantite_energie = 0
 def Weather():
 	print("weather affiche la  temperature: ",temperature)
 
-def transaction(message,messageType,lock):
+def transaction(lock,semaphore_thread):
+	message,messageType = MARKET_QUEUE.receive()
 	data = message.decode().split(',')
 	global Quantite_energie
 	#print(data)
 	qtt=data[1]
 	homeNum=data[0]
-	qttlen=len(qtt)
+	if ')'in data[0] or '(' in data[0]:
+		print("mmodif taille")
+		qttlen=len(qtt)-1
+	else:
+		qttlen=len(qtt)
 	print("taille",qttlen)
 	qttDemande = int(qtt[0:qttlen])
 	#print(homeNum," ",qttDemande)
 	#homeNumber = int(data[0])
 	if messageType==2:#on vend aux maison
 		with lock:
-			Quantite_energie=Quantite_energie-int((message.decode().split(','))[1])
+			Quantite_energie=Quantite_energie-qttDemande
 
 		print(qttDemande," vendue a : ",homeNum)
 	if messageType==1:#on achete le surplus des maison
 		with lock:
-			Quantite_energie=Quantite_energie+int((message.decode().split(','))[1])
+			Quantite_energie=Quantite_energie+qttDemande
 
 		print(qttDemande," achete a : ",homeNum)
 	print("quantité d'energie ayant transité par market",Quantite_energie)
+	semaphore_thread.release()
 		
 
 def Market():
 	Process(target=Weather,args=()).start() 
-	
+	semaphore_thread=threading.Semaphore(3)
 	lock=threading.Lock()
-	message,messageType = MARKET_QUEUE.receive()
-	while message != None:
-		trans=threading.Thread(target=transaction,args=(message,messageType,lock))
+	while True:
+		semaphore_thread.acquire()
+		trans=threading.Thread(target=transaction,args=(lock,semaphore_thread))
 		trans.start()
 		
-		message,messageType = MARKET_QUEUE.receive()
-	trans.join()
+	
+	
 	
 
 def Houses():
