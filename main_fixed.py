@@ -4,7 +4,7 @@ import os,signal, time, sys, random, sysv_ipc,datetime,threading
 
 
 def Weather():
-    # while True:
+    while True:
         Maj_Temp=random.randint(-5,5)
         if -20<=(temperature.value + Maj_Temp)<=20:
             temperature.value=temperature.value+Maj_Temp
@@ -36,13 +36,12 @@ def transaction(lock,semaphore_thread,prix_courant):
 			Quantite_energie=Quantite_energie+qttDemande
 
 		print(qttDemande," kwH achete a : ",homeNum,"par Market! a ",prix_courant,"euros")
-	print("quantité d'energie ayant transité par market",Quantite_energie)
 	semaphore_thread.release()
 
 
 def External():
-    while True: #1 == 1 ?
-        i=random.randint(0,100)
+    while True:
+        i=random.randint(0,10000)
         if (i==1):
             os.kill(os.getppid(), signal.SIGUSR1)
 
@@ -50,12 +49,17 @@ def Price(prix_courant,val_ext):
     coef_ext=[-200,-150,80,120,150,200]
     tot = 0
     for i in range (0,5):
-        tot=tot+prix_courant*coef_ext[i]*val_ext[i]
-    return tot
+        tot=tot+0.01*prix_courant+coef_ext[i]*val_ext[i]
+    return tot#*0.0001 #coef pour faire varier de manière acceptable la contribution des facteur exterieur
 
 
 def receiveSignal(signalNumber, frame):
     tab_ext = list(map(lambda : random.randint(0,1),tab_ext))
+
+def Affichage():
+    while True:
+        time.delay(30)
+        print("quantité d'energie ayant transité par market",Quantite_energie)
 
 def Market():
     Process(target=Weather,args=()).start()
@@ -64,10 +68,10 @@ def Market():
     prix_courant = 0.14
     tab_ext = Array('i', range(10))
     ext=Process(target=External,args=())
+    threading.Thread(target=Affichage,args=()).start
     while True:
         semaphore_thread.acquire()
-        trans=threading.Thread(target=transaction,args=(lock,semaphore_thread,prix_courant))
-        trans.start()
+        threading.Thread(target=transaction,args=(lock,semaphore_thread,prix_courant)).start()
         prix_courant=Price(prix_courant,tab_ext)
         signal.signal(signal.SIGUSR1, receiveSignal)
 
@@ -90,8 +94,8 @@ def Home(homeNumber,A,B):
           #  homeProd = 150#temperature.value * B
        # else:
         #    homeConso = 150#temperature.value * A
-         #   homeProd = 100#temperature.value * B    
-	    
+         #   homeProd = 100#temperature.value * B
+
         if homeConso < homeProd:
             Surproduction(homeNumber,homeConso,homeProd)
 
@@ -127,7 +131,7 @@ def Surproduction(homeNumber,homeConso,homeProd):
                             print (messageType)
                             if messageType == 3:
                                 surproduction = int(surproduction - qttDemande)
-                                print("sell")
+                                #print("sell")
                     else:
                         valeurs=str(homeNumber)+','+str(surproduction)
                         MARKET_QUEUE.send(valeurs.encode(),type=1)
@@ -146,9 +150,7 @@ def Surproduction(homeNumber,homeConso,homeProd):
             valeurs=str(homeNumber)+','+str(surproduction)
             MARKET_QUEUE.send(valeurs.encode(),type=1)
             surproduction = 0
-            #TODO : Verification du print dans le thread
 
-        
 
 def Surconsommation(homeNumber,homeConso,homeProd):
     print("Surconso", homeNumber)
@@ -158,21 +160,21 @@ def Surconsommation(homeNumber,homeConso,homeProd):
         HOME_QUEUE.send(str((homeNumber,surconsommation,time.time())).encode(),type=1)
         time.sleep(10) #ne pas toucher!
         if HOME_QUEUE.current_messages != 0:
-            print("conso 1",homeNumber)
+            #print("conso 1",homeNumber)
             message,messageType = HOME_QUEUE.receive()
-        
+
 
             if messageType == 2:
-                print("conso 2",homeNumber)
+                #print("conso 2",homeNumber)
                 data = message.decode().split(',')
-                print (data)
+                #print (data)
                 print("home",data[0],"vend",data[1],"Kwh à",homeNumber) #process vendeur, quantite
                 HOME_QUEUE.send("",type=3) #ACK
             else:
                 valeurs= str(homeNumber)+','+str(surconsommation)
                 MARKET_QUEUE.send(valeurs.encode(),type=2)
                 surconsommation = 0
-        else: 
+        else:
             valeurs= str(homeNumber)+','+str(surconsommation)
             MARKET_QUEUE.send(valeurs.encode(),type=2)
             surconsommation = 0
@@ -195,5 +197,4 @@ if __name__ == '__main__':
     Process(target=Market,args=()).start()
     Process(target=Houses,args=()).start()
     signal.signal(signal.SIGINT,signal_handler)
-    signal.pause()
-
+signal.pause()
