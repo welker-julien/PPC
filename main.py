@@ -1,29 +1,14 @@
 from multiprocessing import Process,Value,Array
-import os,signal, time, sys, random, sysv_ipc,datetime
-import threading
+import os,signal, time, sys, random, sysv_ipc,datetime,threading
 
-Quantite_energie = 0
+
+
 def Weather():
     # while True:
         Maj_Temp=random.randint(-5,5)
         if -20<=(temperature.value + Maj_Temp)<=20:
             temperature.value=temperature.value+Maj_Temp
             time.sleep(1)
-
-def External():
-    while True: #1 == 1 ?
-        i=random.randint(0,100)
-        if (i==1):
-            os.kill(os.getppid(), signal.SIGUSR1)
-
-def Price(prix_courant,val_ext):
-    coef_ext=[-200,-150,80,120,150,200]
-    tot = 0
-    for i in range (0,5):
-        tot=tot+prix_courant*coef_ext[i]*val_ext[i]
-    return tot
-
-#TODO : fonction transaction
 
 def transaction(lock,semaphore_thread):
 	message,messageType = MARKET_QUEUE.receive()
@@ -54,6 +39,21 @@ def transaction(lock,semaphore_thread):
 	print("quantité d'energie ayant transité par market",Quantite_energie)
 	semaphore_thread.release()
 
+
+def External():
+    while True: #1 == 1 ?
+        i=random.randint(0,100)
+        if (i==1):
+            os.kill(os.getppid(), signal.SIGUSR1)
+
+def Price(prix_courant,val_ext):
+    coef_ext=[-200,-150,80,120,150,200]
+    tot = 0
+    for i in range (0,5):
+        tot=tot+prix_courant*coef_ext[i]*val_ext[i]
+    return tot
+#TODO : fonction transaction
+
 def receiveSignal(signalNumber, frame):
     tab_ext = list(map(lambda : random.randint(0,1),tab_ext))
 
@@ -64,8 +64,6 @@ def Market():
     prix_courant = 0.14
     tab_ext = Array('i', range(10))
     ext=Process(target=External,args=())
-
-
     while True:
         semaphore_thread.acquire()
         trans=threading.Thread(target=transaction,args=(lock,semaphore_thread))
@@ -96,7 +94,7 @@ def Home(homeNumber,A,B):
 
 def Surproduction(homeNumber,homeConso,homeProd):
     print("Surprod", homeNumber)
-    surproduction = homeProd - homeConso
+    surproduction = int(homeProd - homeConso)
     print("surproduction de ", surproduction," par ",homeNumber)
     while surproduction != 0:
         print("A")
@@ -104,9 +102,12 @@ def Surproduction(homeNumber,homeConso,homeProd):
         if HOME_QUEUE.current_messages != 0:
             print("B")
             message,messageType = HOME_QUEUE.receive()
-        else: #TODO : GERER MARKET
-            print("B2")
-            return
+        else:
+            print ("surprod vendue MARKET")
+            MARKET_QUEUE.send(str((homeNumber,surproduction)).encode(),type=1)
+            surproduction = 0
+            #TODO : Verification du print dans le thread
+
         if message != None:
             print("C")
             data = message.decode().split(',')
@@ -117,7 +118,9 @@ def Surproduction(homeNumber,homeConso,homeProd):
                     print("E")
                     if  int(data[2].split(".")[0]) + 20 >  time.time():
                         print("F")
-                        HOME_QUEUE.send(str((homeNumber,qttDemande)).encode(),type = 2) #ACK
+                        message=str(homeNumber)+","+str(qttDemande)
+                        HOME_QUEUE.send(message.encode(),type = 2) #ACK
+                        time.sleep(3)
                     if HOME_QUEUE.current_messages != 0:
                         message,messageType = HOME_QUEUE.receive()
                         print("G")
@@ -130,7 +133,6 @@ def Surproduction(homeNumber,homeConso,homeProd):
             valeurs=str(homeNumber)+','+str(surproduction)
             MARKET_QUEUE.send(valeurs.encode(),type=1)
             surproduction = 0
-            #TODO : Verification du print dans le thread
 
 def Surconsommation(homeNumber,homeConso,homeProd):
     print("Surconso", homeNumber)
@@ -140,22 +142,25 @@ def Surconsommation(homeNumber,homeConso,homeProd):
         HOME_QUEUE.send(str((homeNumber,surconsommation,time.time())).encode(),type=1)
         time.sleep(5) #ne pas toucher!
         if HOME_QUEUE.current_messages != 0:
+            print("conso 1")
             message,messageType = HOME_QUEUE.receive()
         else: #TODO : GERER MARKET
-                return
+                pass
 
         if messageType == 2:
+            print("conso 1")
             data = message.decode().split(',')
+            print (data)
             print("home",data[0],"vend",data[1],"Kwh à",homeNumber) #process vendeur, quantite
             HOME_QUEUE.send("",type=3) #ACK
         else:
             valeurs= str(homeNumber)+','+str(surconsommation)
             MARKET_QUEUE.send(valeurs.encode(),type=2)
             surconsommation = 0
-            #TODO : Verification du print dans le thread.
 
 if __name__ == '__main__':
     NB_HOME = 2
+    Quantite_energie = 0
     temperature = Value('d',20)
     HOME_QUEUE = sysv_ipc.MessageQueue(1000,sysv_ipc.IPC_CREAT)
     MARKET_QUEUE = sysv_ipc.MessageQueue(1100,sysv_ipc.IPC_CREAT)
