@@ -24,14 +24,14 @@ def transaction(lock,semaphore_thread,prix_courant):
 
 	if messageType==2:#on vend aux maison
 		with lock:
-			Quantite_energie=Quantite_energie-qttDemande
+			Quantite_energie.value=Quantite_energie.value-qttDemande
 
-		print(qttDemande,"kwh vendue a : ",homeNum,"par Market! a",prix_courant,"euros")
+		print('\x1b[6;32;40m',qttDemande,"kwh vendue a : ",homeNum,"par Market! a",prix_courant,"euros",'\x1b[0m')
 	if messageType==1:#on achete le surplus des maison
 		with lock:
-			Quantite_energie=Quantite_energie+qttDemande
+			Quantite_energie.value=Quantite_energie.value+qttDemande
 
-		print(qttDemande," kwH achete a : ",homeNum,"par Market! a ",prix_courant,"euros")
+		print('\x1b[6;31;40m',qttDemande," kwH achete a : ",homeNum,"par Market! a ",prix_courant,"euros",'\x1b[0m')
 	semaphore_thread.release()
 
 
@@ -45,7 +45,7 @@ def Price(prix_courant,val_ext,lock):
     coef_ext=[-200,-150,80,120,150,200]
     tot = 0
     with lock:
-        qtt=Quantite_energie
+        qtt=Quantite_energie.value
     if qtt<0:
         qtt=-1*qtt
     for i in range (0,5):
@@ -59,8 +59,8 @@ def receiveSignal(signalNumber, frame):
 
 def Affichage():
     while True:
-        time.delay(30)
-        print("quantité d'energie ayant transité par market",Quantite_energie)
+        time.sleep(30)
+        print('\x1b[6;37;40m',"quantité d'energie ayant transité par market",Quantite_energie.value,"Kwh",'\x1b[0m')
 
 def Market():
     Process(target=Weather,args=()).start()
@@ -77,6 +77,7 @@ def Market():
         signal.signal(signal.SIGUSR1, receiveSignal)
 
 def Houses():
+
     for i in range(NB_HOME):
         A,B = (random.randint(-10,10) for x in range(0,2))
         home = Process(target=Home,args=(i,A,B,))
@@ -149,7 +150,7 @@ def Surconsommation(homeNumber,homeConso,homeProd):
 
             if messageType == 2:
                 data = message.decode().split(',')
-                print("home number",data[0],"vend",data[1],"Kwh à",homeNumber) #process vendeur, quantite
+                print('\x1b[6;33;40m',"maison numéro",data[0],"vend",data[1],"Kwh à",homeNumber,'\x1b[0m') #process vendeur, quantite
                 HOME_QUEUE.send("",type=3) #ACK
             else:
                 valeurs= str(homeNumber)+','+str(surconsommation)
@@ -169,13 +170,14 @@ def signal_handler(sig,frame):
 
 if __name__ == '__main__':
     NB_HOME = 5
-    Quantite_energie = 0
+    Quantite_energie = Value('d',0)
     temperature = Value('d',20)
     HOME_QUEUE = sysv_ipc.MessageQueue(1000,sysv_ipc.IPC_CREAT)
     MARKET_QUEUE = sysv_ipc.MessageQueue(1100,sysv_ipc.IPC_CREAT)
     tab_ext = [0 for x in range(6)]
     # Market processing
+    Process(target=Affichage,args=()).start()
     Process(target=Market,args=()).start()
     Process(target=Houses,args=()).start()
     signal.signal(signal.SIGINT,signal_handler)
-    signal.pause()
+signal.pause()
