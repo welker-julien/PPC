@@ -37,20 +37,21 @@ def transaction(lock,semaphore_thread,prix_courant):
 
 def External(): #envoie du signal usr1
     while True:
-        i = random.randint(0,10000)
+        i = random.randint(0,100000)
         if (i==1):
-            time.sleep(5)
+            time.sleep(10)
             os.kill(os.getppid(),signal.SIGUSR1)
 
 def Price(prix_courant,val_ext,lock):
     coef_ext=[-200,-150,80,120,150,200]
-    tot = 0
     with lock:
-        qtt=Quantite_energie.value
-    for i in range (0,5):
-        tot=tot+coef_ext[i]*val_ext[i]*0.001+0.001*temperature.value*(1/5)
-    return 0.99*prix_courant+tot+qtt*0.0009
-
+        tot = 0
+        for i in range (0,5):
+            tot=tot+coef_ext[i]*val_ext[i]*0.001+0.001*temperature.value*(1/5)
+    if 0.99*prix_courant+tot*0.001+(Quantite_energie.value*0.00009) > 0:
+        return 0.99*prix_courant+tot*0.001+(Quantite_energie.value*0.00009)
+    else:
+        return -(0.99*prix_courant+tot*0.001+(Quantite_energie.value*0.00009))
 
 def receiveSignal(signalNumber, frame):
     print ('\x1b[6;35;40m',"evenement externe",'\x1b[0m')
@@ -178,4 +179,4 @@ if __name__ == '__main__':
     Process(target=Market,args=()).start()
     Process(target=Houses,args=()).start()
     signal.signal(signal.SIGUSR1,receiveSignal)
-    #TODO : handle clean exit
+#TODO : handle clean exit
