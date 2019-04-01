@@ -37,8 +37,9 @@ def transaction(lock,semaphore_thread,prix_courant):
 
 def External(): #envoie du signal usr1
     while True:
-        i=random.randint(0,1)
+        i = random.randint(0,10000)
         if (i==1):
+            time.sleep(5)
             os.kill(os.getppid(),signal.SIGUSR1)
 
 def Price(prix_courant,val_ext,lock):
@@ -53,7 +54,7 @@ def Price(prix_courant,val_ext,lock):
 
 def receiveSignal(signalNumber, frame):
     print ('\x1b[6;35;40m',"evenement externe",'\x1b[0m')
-    tab_ext = list(map(lambda : random.randint(0,1),tab_ext))
+    tab_ext = [random.randint(0,1) for x in range(TAILLE_TAB)]
 
 def Affichage():
     while True:
@@ -67,7 +68,7 @@ def Market():
     prix_courant = 0.14
     tab_ext = Array('i', range(10))
     Process(target=External,args=()).start()
-    threading.Thread(target=Affichage,args=()).start()
+    #threading.Thread(target=Affichage,args=()).start()
     while True:
         semaphore_thread.acquire()
         threading.Thread(target=transaction,args=(lock,semaphore_thread,prix_courant)).start()
@@ -103,7 +104,7 @@ def Surproduction(homeNumber,homeConso,homeProd):
         time.sleep(5)
         if HOME_QUEUE.current_messages != 0:
             message,messageType = HOME_QUEUE.receive()
-            if message != None:
+            if message != None and len(message) > 1:
                 data = message.decode().split(',')
                 qttDemande = int(data[1])
                 if messageType == 1:
@@ -144,8 +145,6 @@ def Surconsommation(homeNumber,homeConso,homeProd):
         time.sleep(10) #ne pas toucher!
         if HOME_QUEUE.current_messages != 0:
             message,messageType = HOME_QUEUE.receive()
-
-
             if messageType == 2:
                 data = message.decode().split(',')
                 print('\x1b[6;33;40m',"maison numéro",data[0],"vend",data[1],"Kwh à",homeNumber,'\x1b[0m') #process vendeur, quantite
@@ -168,13 +167,15 @@ def signal_handler(sig,frame):
 
 if __name__ == '__main__':
     NB_HOME = 5
+    TAILLE_TAB = 6
     Quantite_energie = Value('d',0)
     temperature = Value('d',20)
     HOME_QUEUE = sysv_ipc.MessageQueue(1000,sysv_ipc.IPC_CREAT)
     MARKET_QUEUE = sysv_ipc.MessageQueue(1100,sysv_ipc.IPC_CREAT)
-    tab_ext = [0 for x in range(6)]
+    tab_ext = [0 for x in range(TAILLE_TAB)]
     # Market processing
     Process(target=Affichage,args=()).start()
     Process(target=Market,args=()).start()
     Process(target=Houses,args=()).start()
     signal.signal(signal.SIGUSR1,receiveSignal)
+    #TODO : handle clean exit
